@@ -36,7 +36,7 @@ const all = (array) => {
       if (promise instanceof Promise) {
         promise.then(
           (res) => addData(index, res),
-          (err) => reject(err)
+          (err) => reject(err),
         );
       } else {
         addData(index, promise);
@@ -542,7 +542,7 @@ let promise = new Promise((resolve, reject) => {
     },
     (err1) => {
       console.log(err1);
-    }
+    },
   )
   .then((data2) => {
     console.log(data2);
@@ -743,7 +743,7 @@ Function.prototype.bind = function (context, ...args) {
     return self.apply(
       // 这里判断是为了内部函数作为构造函数被new时this可以正确指向新对象
       this instanceof self ? this : context,
-      args.concat(innerArgs)
+      args.concat(innerArgs),
     );
   };
 };
@@ -956,7 +956,7 @@ Promise.prototype.all = function (arr) {
           },
           (err) => {
             reject(err);
-          }
+          },
         );
       } else {
         ans[index] = item;
@@ -1056,7 +1056,7 @@ Promise.prototype.race = function (promises) {
           },
           (err) => {
             reject(err);
-          }
+          },
         );
       } else {
         resolve(promise);
@@ -1157,7 +1157,7 @@ promise.prototype.all = function (promises) {
           },
           (err) => {
             reject(err);
-          }
+          },
         );
       } else {
         res.push(promise);
@@ -1376,7 +1376,7 @@ function asyncPool(promises, limit) {
             },
             (err) => {
               reject(err);
-            }
+            },
           )
           .finally(() => {
             isRunning--;
@@ -1821,7 +1821,7 @@ Promise.prototype.all = function (promises) {
           },
           (err) => {
             reject(err);
-          }
+          },
         );
       } else {
         ans[index] = promise;
@@ -2013,7 +2013,7 @@ Function.prototype.bind = function (context, ...args) {
   return function () {
     return self.apply(
       this instanceof self ? this : context,
-      args.concat(arguments)
+      args.concat(arguments),
     );
   };
 };
@@ -2155,7 +2155,7 @@ Promise.prototype.all = function (promises) {
           },
           (err) => {
             reject(err);
-          }
+          },
         );
       } else {
         ans.push(res);
@@ -2210,7 +2210,7 @@ class Controller {
       (err) => {
         this.running--;
         throw new Error(err);
-      }
+      },
     );
   }
 }
@@ -2521,7 +2521,7 @@ Promise.prototype.all = function (promises) {
       if (promises[i] instanceof Promise) {
         promises[i].then(
           (res) => add(res, i),
-          (err) => reject(err)
+          (err) => reject(err),
         );
       } else {
         add(promises[i], i);
@@ -2712,7 +2712,7 @@ Promise.protoType.myAll = function (promises) {
           },
           (err) => {
             rejected(err);
-          }
+          },
         );
       } else {
         ans.push(promises[i]);
@@ -3122,7 +3122,7 @@ class handleRequest {
           },
           (err) => {
             ans.push(err);
-          }
+          },
         );
         if (i === n - 1) resolve(ans);
       }
@@ -3247,7 +3247,7 @@ function all(arr) {
           },
           (err) => {
             reject(err);
-          }
+          },
         );
       } else {
         ans.push(arr[i]);
@@ -3383,7 +3383,7 @@ function all(arr) {
           },
           (err) => {
             reject(err);
-          }
+          },
         );
       } else {
         ans[i] = arr[i];
@@ -3411,7 +3411,7 @@ function allSettled(arr) {
           (err) => {
             ans[i] = { status: "rejected", reason: err };
             num++;
-          }
+          },
         );
       } else {
         ans[i] = { status: "fullfilled", value: arr[i] };
@@ -3459,7 +3459,7 @@ function retry(promiseFn, times) {
           } else {
             retryFn(t - 1);
           }
-        }
+        },
       );
     }
     let fn = promiseFn();
@@ -3469,7 +3469,7 @@ function retry(promiseFn, times) {
       },
       (err) => {
         retryFn(fn, times);
-      }
+      },
     );
   });
 }
@@ -3770,3 +3770,535 @@ function flat(arr, n) {
   }
   return ans;
 }
+
+// 元素求和
+/*
+l1=[3, 6, 5], l2=[2, 4, 3, 7], 返回[5, 0, 9, 7]。数组长度不一定
+*/
+function sum(l1, l2) {
+  let ans = [];
+  let length1 = l1.length;
+  let length2 = l2.length;
+  let length = Math.max(length1, length2);
+  let pre = 0;
+  for (let i = 0; i < length; i++) {
+    let v1 = l1[i] ? l1[i] : 0;
+    let v2 = l2[i] ? l2[i] : 0;
+    let total = v1 + v2 + pre;
+    pre = Math.floor(total / 10);
+    ans.push(total % 10);
+  }
+  return ans;
+}
+
+// 字符串trim
+String.prototype.trim = function () {
+  let str = this;
+  // return str
+  //   .split("")
+  //   .filter((item) => item !== "")
+  //   .join("");
+  str = str.split("");
+  while (str[0] === " ") {
+    str.shift();
+  }
+  while (str[str.length - 1] === " ") {
+    str.pop();
+  }
+  return str.join("");
+};
+
+// 使用JS实现一个repeat方法
+/*
+const repeatFunc = repeat(alert, 4, 3000), 
+调用这个repeatFunc("hellworld")会alert4次helloworld, 每次间隔3秒
+*/
+function repeat(func, times, wait) {
+  return function repeatFunc(str) {
+    for (let i = 0; i < times; i++) {
+      setTimeout(() => {
+        func(str);
+      }, wait * i);
+    }
+  };
+}
+
+// 数组转树(小米一面)
+/*
+data = [
+ {id: 1, pid: null, name: '中国'},
+ {id: 2, pid: 1, name: '广东省'},
+ {id: 3, pid: 1, name: '四川省'},
+ {id: 5, pid: 2, name: '深圳市'},
+ {id: 4, pid: 2, name: '中山市'},
+ {id: 8, pid: 1, name: '湖北省'},
+]
+*/
+function arrToTree(arr, parentId = null) {
+  let ans = {};
+  for (let i = 0; i < arr.length; i++) {
+    if (arr[i].pid === parentId) {
+      let obj = {
+        id: arr[i].id,
+        name: arr[i].name,
+        children: arrToTree(arr, arr[i].id),
+      };
+      ans[arr[i].id] = obj;
+    }
+  }
+  return ans;
+}
+
+// 手写bind
+Function.prototype.mybind = function (context, args) {
+  // bind返回一个函数
+  let fn = this;
+  return function () {
+    fn.apply(this instanceof fn ? this : context, args.concat(arguments));
+  };
+};
+
+// promise.allSettled
+Promise.prototype.allSettled = function (promises) {
+  let ans = [];
+  return new Promise((resolve, reject) => {
+    for (let i = 0; i < promises.length; i++) {
+      promises[i].then(
+        (res) => {
+          ans[i] = res;
+        },
+        (err) => {
+          ans[i] = err;
+        },
+      );
+    }
+    if (ans.length === promises.length) {
+      resolve(ans);
+    } else {
+      reject(ans);
+    }
+  });
+};
+
+// 深拷贝
+function deepClone(obj, map = new Map()) {
+  // 对象(数组),函数,普通类型, Set,Map,Date
+  // 普通类型直接返回
+  let ans = null;
+  if (obj === null || typeof obj !== "object") {
+    return obj;
+  }
+  if (map.has(obj)) {
+    return map.get(obj);
+  }
+  if (obj instanceof Map) {
+    let newMap = new Map();
+    for (let [key, value] of obj) {
+      newMap.set(key, deepClone(value, map));
+    }
+    map.set(obj, newMap);
+    return newMap;
+  }
+  if (obj instanceof Set) {
+    let newSet = new Set();
+    for (let item of obj) {
+      newSet.add(deepClone(item, map));
+    }
+    map.set(obj, newSet);
+    return newSet;
+  }
+  if (obj instanceof Date) {
+    let newDate = new Date(obj);
+    map.set(obj, newDate);
+    return newDate;
+  }
+  if (typeof obj !== "object") {
+    ans = obj;
+    map.set(obj, ans);
+    return ans;
+  } else {
+    // 区分数组和对象
+    ans = Array.isArray(obj) ? [] : {};
+    map.set(obj, ans);
+    for (let key in obj) {
+      if (obj.hasOwnProperty(key)) {
+        ans[key] = deepClone(obj[key], map);
+      }
+    }
+    return ans;
+  }
+}
+
+// 柯里化
+function curry(fn) {
+  let length = fn.length;
+  return function _curry(...args) {
+    if (args.length >= length) {
+      return fn.apply(this, args);
+    } else {
+      return function (...nextargs) {
+        return _curry.apply(this, args.concat(nextargs));
+      };
+    }
+  };
+}
+
+// 柯里化
+function sum(...args) {
+  let allArgs = args;
+  _sum.sumOf = function () {
+    let num = allArgs.reduce((a, b) => a + b, 0);
+    console.log(num);
+  };
+  function _sum(...secArgs) {
+    allArgs = allArgs.concat(secArgs);
+    return _sum;
+  }
+  return _sum;
+}
+
+// 对象转数组
+function flat(obj) {
+  let ans = [];
+  for (let key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      let arr = obj[key];
+      function func(a) {
+        for (let i = 0; i < a.length; i++) {
+          let obj = { name: a[i], parent: key };
+          if (Array.isArray(a[i])) {
+            func(a[i]);
+          } else {
+            ans.push(obj);
+          }
+        }
+      }
+      func(arr);
+    }
+  }
+  console.log(ans);
+}
+
+// 加减法计数器
+function counter() {
+  let count = 0;
+  return {
+    add: function () {
+      count++;
+      console.log(count);
+    },
+    sub: function () {
+      count--;
+      console.log(count);
+    },
+  };
+}
+
+// DOM结构逐层输出
+let dom = document.getElementById("root");
+function printDom(dom) {
+  // 层序遍历变种
+  let ans = [];
+  let queue = [dom];
+  while (queue.length) {
+    let n = queue.length;
+    let arr = [];
+    for (let i = 0; i < n; i++) {
+      let node = queue.shift();
+      arr.push(node.tagName);
+      if (node.children) {
+        queue.push(...node.children);
+      }
+    }
+    ans.push(arr);
+  }
+}
+
+// 字符串转树
+function strToTree(str) {
+  str = str.split("/");
+  let obj = {};
+  let cur = obj;
+  for (let i = 0; i < str.length; i++) {
+    cur[str[i]] = cur[str[i]] || {};
+    cur = cur[str[i]];
+  }
+  return obj;
+}
+
+// 判断完全平方数
+function judgeSquare(num) {
+  let left = 0;
+  let right = num;
+  while (left <= right) {
+    let mid = left + Math.floor((right - left) / 2);
+    if (mid * mid === num) {
+      return true;
+    } else if (mid * mid > num) {
+      right = mid - 1;
+    } else {
+      left = mid + 1;
+    }
+  }
+  return false;
+}
+
+// 解析URL
+function parseURL(url) {
+  let obj = {};
+  let u = new URL(url);
+  obj.protocol = u.protocol;
+  obj.host = u.hostname;
+  obj.port = u.port;
+  obj.pathname = u.pathname;
+  obj.search = u.search;
+  console.log(obj);
+}
+
+// 解析URL参数
+function parseUrlParams(url) {
+  let search = url.split("?")[1];
+  let params = search.split("&");
+  let ans = {};
+  for (let i = 0; i < params.length; i++) {
+    let [key, value] = params[i].split("=");
+    ans[key] = value;
+  }
+  console.log(ans);
+}
+
+// 数组扁平化
+Array.prototype.flat = function (n = 1) {
+  let ans = [];
+  d;
+  if (n === 0) return this;
+  for (let i = 0; i < this.length; i++) {
+    if (Array.isArray(this[i]) && n > 0) {
+      ans.push(...this[i].flat(n - 1));
+    } else {
+      ans.push(this[i]);
+    }
+  }
+  console.log(ans);
+};
+
+// 版本号排序(没有数字时视作0)
+/*
+const a = ["1.2.3", "1.2.4", "0.0.1", "0.1.0", "2.3.4.5"];
+*/
+function sortVersions(arr) {
+  arr.sort((a, b) => {
+    let aArr = a.split(".");
+    let bArr = b.split(".");
+    let maxLength = Math.max(aArr.length, bArr.length);
+    for (let i = 0; i < maxLength; i++) {
+      let anum = aArr[i] ? aArr[i] - 0 : 0;
+      let bnum = bArr[i] ? bArr[i] - 0 : 0;
+      if (anum - 0 < bnum - 0) {
+        return -1;
+      } else if (anum - 0 > bnum - 0) {
+        return 1;
+      } else {
+        continue;
+      }
+    }
+  });
+}
+
+// 柯里化
+function curry(fn) {
+  let length = fn.length;
+  let all = [];
+  return function _curry(...args) {
+    all = all.concat(args);
+    if (all.length >= length) {
+      return fn.apply(this, all);
+    } else {
+      return _curry;
+    }
+  };
+}
+
+/*
+app.use(next => setTimeout(() => next(), 2000))
+app.use(next => {
+    console.log(123)
+    next()
+})
+app.run() // 2000ms -> 123
+*/
+class App {
+  constructor() {
+    this.queue = [];
+    this.index = 0;
+  }
+  use(fn) {
+    this.queue.push(fn);
+  }
+
+  dispatch(i) {
+    // 执行第i个函数,并启动下一个函数
+    if (i >= this.queue.length) return;
+    let fn = this.queue[i];
+    fn(() => this.dispatch(i + 1));
+  }
+
+  run() {
+    this.dispatch(this.index);
+  }
+}
+
+// 防抖
+function debounce(fn, delay) {
+  let timer = null;
+  return function () {
+    if (timer) {
+      clearTimeout(timer);
+    }
+    timer = setTimeout(() => {
+      fn.apply(this, arguments);
+    }, delay);
+  };
+}
+
+// 节流
+function throttle(fn, delay) {
+  let lastTime = null;
+  return function () {
+    let now = Date.now();
+    if (!lastTime || now - lastTime > delay) {
+      fn.apply(this, arguments);
+      lastTime = now;
+    }
+  };
+}
+
+// 给定一个升序数组,根据这个数组构建一个二叉平衡搜索树,结果返回一个数组,元素顺序是树的层序遍历的顺序,子节点为空时返回null
+/*
+[1, 2, 3, 4, 5, 6, 7, 8]
+*/
+const fn = (arr) => {
+  if (!arr || arr.length === 0) return [null];
+  let ans = [];
+  const buildTree = (arr) => {
+    if (!arr || arr.length === 0) return;
+    let mid = Math.floor(arr.length / 2);
+    ans.push(arr[mid]);
+    buildTree(arr.slice(0, mid));
+    buildTree(arr.slice(mid + 1, arr.length));
+  };
+  buildTree(arr);
+  return ans;
+};
+
+// 实现定时器,支持快进,暂停,恢复
+class Timer {
+  constructor() {
+    this.time = 0;
+    this.handler = null;
+    this.init();
+  }
+
+  init() {
+    this.handler = setInterval(() => {
+      this.time += 1;
+    }, 1000);
+  }
+
+  fastPast() {
+    this.time += 10;
+  }
+
+  pause() {
+    clearInterval(this.handler);
+  }
+
+  reStart() {
+    this.handler = setInterval(() => {
+      this.time += 1;
+    }, 1000);
+  }
+}
+
+// promise的使用(接口b依赖接口a,接口b依赖接口c)
+const fetchA = async () => {};
+const fetchB = async () => {};
+const fetchC = async () => {};
+
+const res = await Promise.all([fetchA(), fetchC()]);
+fetchB(res[0], res[1]);
+
+// 实现一个计数器,暴露increase方法和count属性
+class Counter {
+  constructor() {
+    this.count = 0;
+  }
+  increase() {
+    this.count++;
+  }
+  get count() {
+    return this.count;
+  }
+}
+
+function Counter() {
+  let count = 0;
+  return {
+    increase() {
+      count++;
+    },
+    count: count, // 错误写法,获取到的是初始值0
+    get count() {
+      return count;
+    },
+  };
+}
+
+// 实现一个抽奖函数(A 50% B 25% C 20% D 4% E 1%),当连续79次没有抽到E时,下一次必出E
+function draw() {
+  let count = 0;
+  return function run() {
+    let num = Math.random() * 100;
+    if (count === 79) {
+      count = 0;
+      console.log("E");
+      return;
+    }
+    if (num >= 50) {
+      console.log("A");
+    } else if (num >= 25 && num < 50) {
+      console.log("B");
+    } else if (num >= 5 && num < 25) {
+      console.log("C");
+    } else if (num >= 1 && num < 5) {
+      console.log("D");
+    } else if (num >= 0 && num < 1) {
+      console.log("E");
+      count = 0;
+      return;
+    }
+    count++;
+  };
+}
+
+// promise.all
+Promise.prototype.all = function (promises) {
+  return new Promise((resolve, reject) => {
+    let ans = [];
+    for (let i = 0; i < promises.length; i++) {
+      if (promises[i] instanceof Promise) {
+        promises[i].then(
+          (res) => {
+            ans.push(res);
+            if (ans.length === promises.length) {
+              resolve(ans);
+            }
+          },
+          (err) => reject(err),
+        );
+      } else {
+        ans.push(promises[i]);
+      }
+    }
+  });
+};
